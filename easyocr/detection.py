@@ -74,8 +74,6 @@ def test_net(canvas_size, mag_ratio, net, image, text_threshold, link_threshold,
         polys_list.append(polys)
 
     del y
-    if device == 'cuda':
-        torch.nn.Module.to_empty()
     gc.collect()
     return boxes_list, polys_list
 

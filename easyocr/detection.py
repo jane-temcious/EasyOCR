@@ -42,10 +42,13 @@ def test_net(canvas_size, mag_ratio, net, image, text_threshold, link_threshold,
     x = x.to(device)
 
     # forward pass
-    with torch.no_grad():
+    with torch.inference_mode():
         y, feature = net(x)
 
     boxes_list, polys_list = [], []
+    
+    del x, feature
+    
     for out in y:
         # make score and link map
         score_text = out[:, :, 0].cpu().data.numpy()
@@ -69,6 +72,9 @@ def test_net(canvas_size, mag_ratio, net, image, text_threshold, link_threshold,
         boxes_list.append(boxes)
         polys_list.append(polys)
 
+    del y
+    if device =='cuda':
+        torch.cuda.empty_cache()
     return boxes_list, polys_list
 
 def get_detector(trained_model, device='cpu', quantize=True, cudnn_benchmark=False):

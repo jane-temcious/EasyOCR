@@ -1,4 +1,5 @@
 import torch
+import gc
 import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 from PIL import Image
@@ -73,8 +74,9 @@ def test_net(canvas_size, mag_ratio, net, image, text_threshold, link_threshold,
         polys_list.append(polys)
 
     del y
-    if device =='cuda':
-        torch.cuda.empty_cache()
+    if device == 'cuda':
+        torch.nn.Module.to_empty()
+    gc.collect()
     return boxes_list, polys_list
 
 def get_detector(trained_model, device='cpu', quantize=True, cudnn_benchmark=False):
